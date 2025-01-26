@@ -1,10 +1,7 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { Types } from "mongoose";
 import jwt from "jsonwebtoken";
-
-interface CustomRequest extends Request {
-  userId?: Types.ObjectId;
-}
+import CustomRequest from "../interfaces/customRequest";
 
 interface JwtPayload {
   userId: Types.ObjectId;
@@ -20,7 +17,7 @@ const authMiddleware = async (
   const token = req.headers["authorization"]?.split(" ")?.[1];
 
   if (!token) {
-    res.status(403).json({ message: "Access denied" });
+    res.status(401).json({ message: "Access denied" });
     return;
   }
 
@@ -30,7 +27,7 @@ const authMiddleware = async (
     next();
   } catch (error) {
     console.error("Error occured while parsing token", error);
-    res.status(400).json({ message: "Invalid token" });
+    res.status(401).json({ message: "Invalid token" });
   }
 };
 

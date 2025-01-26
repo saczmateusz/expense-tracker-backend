@@ -21,6 +21,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       password: hashedPassword,
       firstName,
       lastName,
+      role: "User",
     });
     await newUser.save();
     res.status(201).json({ message: "User registered successfully" });
