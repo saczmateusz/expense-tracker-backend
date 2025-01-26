@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import UserModel, { IUser } from "../models/user";
+import CustomRequest from "../interfaces/customRequest";
+import { IUserAdminDTO, IUserDTO } from "../dto/userDTO";
+import { userToUserAdminDTO, userToUserBasicDTO } from "../mappers/userMappers";
 
 export const createUser = async (
   req: Request,
@@ -13,6 +16,7 @@ export const createUser = async (
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       password: hashedPassword,
+      role: "User",
     });
 
     const savedUser = await user.save();
@@ -87,13 +91,27 @@ export const deleteUser = async (
   }
 };
 
-export const getUsers = async (req: Request, res: Response): Promise<void> => {
+export const getUsers = async (
+  req: CustomRequest,
+  res: Response
+): Promise<void> => {
   try {
+    const currentUser: IUser | null = await UserModel.findById(req.userId);
     const users: IUser[] = await UserModel.find();
     if (users.length === 0) {
       res.status(204).send();
     } else {
-      res.status(200).json(users);
+      if (currentUser && currentUser.role === "Admin") {
+        const usersExtended: IUserAdminDTO[] = users.map((user) =>
+          userToUserAdminDTO(user)
+        );
+        res.status(200).json(usersExtended);
+      } else {
+        const usersBasic: IUserDTO[] = users.map((user) =>
+          userToUserBasicDTO(user)
+        );
+        res.status(200).json(usersBasic);
+      }
     }
   } catch (error: any) {
     console.error("Error retrieving users:", error);
@@ -104,10 +122,11 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const getUserById = async (
-  req: Request,
+  req: CustomRequest,
   res: Response
 ): Promise<void> => {
   try {
+    const currentUser: IUser | null = await UserModel.findById(req.userId);
     const user: IUser | null = await UserModel.findById(req.params.id);
 
     if (!user) {
@@ -117,7 +136,13 @@ export const getUserById = async (
       return;
     }
 
-    res.status(200).json(user);
+    if (currentUser && currentUser.role === "Admin") {
+      const userExtended: IUserAdminDTO = userToUserAdminDTO(user);
+      res.status(200).json(userExtended);
+    } else {
+      const userBasic: IUserDTO = userToUserBasicDTO(user);
+      res.status(200).json(userBasic);
+    }
   } catch (error: any) {
     console.error("Error retrieving user:", error);
     res.status(500).json({
