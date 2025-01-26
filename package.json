@@ -1,6 +1,6 @@
 {
   "name": "expense-tracker-backend",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Expense Tracker Backend application based on Node & Express & MongoDB",
   "main": "index.js",
   "scripts": {
