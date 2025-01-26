@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import bcrypt from "bcrypt";
 import UserModel, { IUser } from "../models/user";
 
 export const createUser = async (
@@ -6,11 +7,12 @@ export const createUser = async (
   res: Response
 ): Promise<void> => {
   try {
-    const user = new UserModel({
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const user: IUser = new UserModel({
       email: req.body.email,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
-      password: req.body.password,
+      password: hashedPassword,
     });
 
     const savedUser = await user.save();

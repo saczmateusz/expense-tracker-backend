@@ -1,9 +1,9 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express, { Request, Response } from "express";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
+import authRoutes from "./routes/auth";
 import userRoutes from "./routes/users";
-
-dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -21,6 +21,7 @@ mongoose
     process.exit();
   });
 
+app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 
 app.get("/", (req: Request, res: Response) => {
