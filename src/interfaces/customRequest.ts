@@ -1,6 +1,6 @@
 import { Request } from "express";
-import { Types } from "mongoose";
+import { IUserDTO } from "../dto/userDTO";
 
 export default interface CustomRequest extends Request {
-  userId?: Types.ObjectId;
+  user?: IUserDTO;
 }

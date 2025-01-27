@@ -1,6 +1,7 @@
 import { NextFunction, Response } from "express";
 import { Types } from "mongoose";
 import jwt from "jsonwebtoken";
+import UserModel, { IUser } from "../models/user";
 import CustomRequest from "../interfaces/customRequest";
 
 interface JwtPayload {
@@ -23,8 +24,19 @@ const authMiddleware = async (
 
   try {
     const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
-    req.userId = decoded.userId as Types.ObjectId;
-    next();
+    const currentUser: IUser | null = await UserModel.findById(decoded.userId);
+    if (currentUser) {
+      req.user = {
+        _id: currentUser._id as Types.ObjectId,
+        email: currentUser.email,
+        firstName: currentUser.firstName,
+        lastName: currentUser.lastName,
+        role: currentUser.role,
+      };
+      next();
+    } else {
+      res.status(400).json({ message: "Invalid user" });
+    }
   } catch (error) {
     console.error("Error occured while parsing token", error);
     res.status(401).json({ message: "Invalid token" });
