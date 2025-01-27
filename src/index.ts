@@ -4,6 +4,7 @@ import express, { Request, Response } from "express";
 import mongoose from "mongoose";
 import authRoutes from "./routes/auth";
 import userRoutes from "./routes/users";
+import expenseRoutes from "./routes/expenses";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -23,6 +24,7 @@ mongoose
 
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
+app.use("/expenses", expenseRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.json({ message: "Expense Tracking with TypeScript Express & MongoDB" });

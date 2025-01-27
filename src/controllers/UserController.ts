@@ -95,8 +95,8 @@ export const getUsers = async (
   req: CustomRequest,
   res: Response
 ): Promise<void> => {
+  const { user: currentUser } = req;
   try {
-    const currentUser: IUser | null = await UserModel.findById(req.userId);
     const users: IUser[] = await UserModel.find();
     if (users.length === 0) {
       res.status(204).send();
@@ -125,8 +125,8 @@ export const getUserById = async (
   req: CustomRequest,
   res: Response
 ): Promise<void> => {
+  const { user: currentUser } = req;
   try {
-    const currentUser: IUser | null = await UserModel.findById(req.userId);
     const user: IUser | null = await UserModel.findById(req.params.id);
 
     if (!user) {
