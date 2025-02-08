@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import express, { Request, Response } from "express";
+import cors from "cors";
 import mongoose from "mongoose";
 import authRoutes from "./routes/auth";
 import userRoutes from "./routes/users";
@@ -10,6 +11,11 @@ const app = express();
 const port = process.env.PORT || 3000;
 const databaseUrl = process.env.DATABASE_URL || "";
 
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+  })
+);
 app.use(express.json());
 
 mongoose
