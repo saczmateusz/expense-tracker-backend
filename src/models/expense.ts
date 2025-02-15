@@ -6,6 +6,7 @@ export interface IExpense extends Document {
   value: number;
   currency: string;
   category: string; // TODO: categoryId?
+  dateCreated: Date;
   userId: Types.ObjectId;
 }
 
@@ -25,6 +26,10 @@ const expenseSchema = new Schema<IExpense>({
   },
   category: {
     type: String,
+    required: true,
+  },
+  dateCreated: {
+    type: Date,
     required: true,
   },
   userId: {
