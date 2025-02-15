@@ -12,6 +12,7 @@ export const createExpense = async (
       value: req.body.value,
       currency: req.body.currency,
       category: req.body.category, // TODO: categoryId?
+      dateCreated: new Date(Date.now()),
       userId: req.user?._id,
     });
 
